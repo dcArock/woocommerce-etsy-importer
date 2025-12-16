@@ -204,6 +204,13 @@ For issues, questions, or contributions:
 
 ## Changelog
 
+### 1.0.1 (2025-01-16)
+- **Critical Fix**: Fixed fatal error when plugin is activated
+- Added class existence checks before initialization
+- Added WooCommerce dependency verification in AJAX handlers
+- Improved error handling for missing dependencies
+- Plugin now gracefully handles activation when WooCommerce is not active
+
 ### 1.0.0 (2025-01-01)
 - Initial release
 - Basic import functionality
