@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Etsy Importer
  * Plugin URI: https://github.com/dcArock/woocommerce-etsy-importer
  * Description: Import Etsy listings as WooCommerce products with images, variations, and pricing
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Your Name
  * Author URI: https://github.com/dcArock
  * License: GPL v2 or later
@@ -20,10 +20,19 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_ETSY_IMPORTER_VERSION', '1.0.1');
+define('WC_ETSY_IMPORTER_VERSION', '1.0.2');
 define('WC_ETSY_IMPORTER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_ETSY_IMPORTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WC_ETSY_IMPORTER_PLUGIN_FILE', __FILE__);
+
+/**
+ * Declare WooCommerce HPOS compatibility
+ */
+add_action('before_woocommerce_init', function() {
+    if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+    }
+});
 
 /**
  * Main plugin class
@@ -49,7 +58,10 @@ class WC_Etsy_Importer {
      * Constructor
      */
     private function __construct() {
-        // Check if WooCommerce is active
+        // Load admin page (always needed for menu)
+        $this->load_admin_page();
+
+        // Check if WooCommerce is active and load dependencies
         add_action('plugins_loaded', array($this, 'check_dependencies'));
 
         // Initialize plugin
@@ -61,6 +73,15 @@ class WC_Etsy_Importer {
         // Register AJAX handlers
         add_action('wp_ajax_wcei_import_etsy_listing', array($this, 'ajax_import_listing'));
         add_action('wp_ajax_wcei_validate_etsy_url', array($this, 'ajax_validate_url'));
+    }
+
+    /**
+     * Load admin page class (always needed for menu)
+     */
+    private function load_admin_page() {
+        if (is_admin()) {
+            require_once WC_ETSY_IMPORTER_PLUGIN_DIR . 'includes/class-admin-page.php';
+        }
     }
 
     /**
@@ -88,24 +109,19 @@ class WC_Etsy_Importer {
     }
 
     /**
-     * Load required files
+     * Load required files (scraper and product creator)
      */
     private function load_dependencies() {
         require_once WC_ETSY_IMPORTER_PLUGIN_DIR . 'includes/class-etsy-scraper.php';
         require_once WC_ETSY_IMPORTER_PLUGIN_DIR . 'includes/class-wc-product-creator.php';
-        require_once WC_ETSY_IMPORTER_PLUGIN_DIR . 'includes/class-admin-page.php';
     }
 
     /**
      * Initialize plugin
      */
     public function init() {
-        // Only initialize if WooCommerce is active and dependencies are loaded
-        if (!class_exists('WooCommerce')) {
-            return;
-        }
-
         // Initialize admin page if we're in admin and class exists
+        // (Admin page will show even if WooCommerce is not active)
         if (is_admin() && class_exists('WC_Etsy_Importer_Admin_Page')) {
             WC_Etsy_Importer_Admin_Page::get_instance();
         }

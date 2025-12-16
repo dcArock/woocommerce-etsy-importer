@@ -204,6 +204,14 @@ For issues, questions, or contributions:
 
 ## Changelog
 
+### 1.0.2 (2025-01-16)
+- **Fixed**: WooCommerce compatibility warning - declared HPOS (High-Performance Order Storage) compatibility
+- **Fixed**: Admin menu "Etsy Importer" not appearing in WordPress dashboard
+- Changed menu capability from 'manage_woocommerce' to 'manage_options' for better visibility
+- Admin page now loads independently and shows clear warning when WooCommerce is not active
+- Form fields are now properly disabled when WooCommerce is missing
+- Improved initialization order to ensure admin menu always appears
+
 ### 1.0.1 (2025-01-16)
 - **Critical Fix**: Fixed fatal error when plugin is activated
 - Added class existence checks before initialization

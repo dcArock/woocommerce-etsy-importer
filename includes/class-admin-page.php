@@ -40,7 +40,7 @@ class WC_Etsy_Importer_Admin_Page {
         add_menu_page(
             __('Etsy Importer', 'wc-etsy-importer'),
             __('Etsy Importer', 'wc-etsy-importer'),
-            'manage_woocommerce',
+            'manage_options',
             'wc-etsy-importer',
             array($this, 'render_admin_page'),
             'dashicons-download',
@@ -52,9 +52,19 @@ class WC_Etsy_Importer_Admin_Page {
      * Render admin page
      */
     public function render_admin_page() {
+        $wc_active = class_exists('WooCommerce');
         ?>
         <div class="wrap wc-etsy-importer-wrap">
             <h1><?php _e('WooCommerce Etsy Importer', 'wc-etsy-importer'); ?></h1>
+
+            <?php if (!$wc_active): ?>
+                <div class="notice notice-error">
+                    <p>
+                        <strong><?php _e('WooCommerce is required!', 'wc-etsy-importer'); ?></strong><br>
+                        <?php _e('WooCommerce Etsy Importer requires WooCommerce to be installed and active. Please install and activate WooCommerce to use this plugin.', 'wc-etsy-importer'); ?>
+                    </p>
+                </div>
+            <?php endif; ?>
 
             <div class="wc-etsy-importer-container">
                 <div class="wc-etsy-importer-form-section">
@@ -77,6 +87,7 @@ class WC_Etsy_Importer_Admin_Page {
                                         cols="80"
                                         class="large-text"
                                         placeholder="https://www.etsy.com/listing/123456789/product-name&#10;https://www.etsy.com/listing/987654321/another-product"
+                                        <?php if (!$wc_active) echo 'disabled'; ?>
                                     ></textarea>
                                     <p class="description">
                                         <?php _e('Example: https://greenwoodcreation.etsy.com/listing/1896333507', 'wc-etsy-importer'); ?>
@@ -86,7 +97,7 @@ class WC_Etsy_Importer_Admin_Page {
                         </table>
 
                         <p class="submit">
-                            <button type="submit" class="button button-primary button-hero" id="start-import">
+                            <button type="submit" class="button button-primary button-hero" id="start-import" <?php if (!$wc_active) echo 'disabled'; ?>>
                                 <?php _e('Start Import', 'wc-etsy-importer'); ?>
                             </button>
                         </p>
