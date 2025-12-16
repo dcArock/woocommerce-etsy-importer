@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WooCommerce Etsy Importer
- * Plugin URI: https://github.com/dcArock/woocommerce-etsy-importer
+ * Plugin URI: https://dcarock.com/wordpress/
  * Description: Import Etsy listings as WooCommerce products with images, variations, and pricing
- * Version: 1.0.2
- * Author: Your Name
- * Author URI: https://github.com/dcArock
+ * Version: 1.3
+ * Author: Chris Arock
+ * Author URI: https://dcarock.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wc-etsy-importer
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_ETSY_IMPORTER_VERSION', '1.0.2');
+define('WC_ETSY_IMPORTER_VERSION', '1.3');
 define('WC_ETSY_IMPORTER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_ETSY_IMPORTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WC_ETSY_IMPORTER_PLUGIN_FILE', __FILE__);
@@ -177,9 +177,17 @@ class WC_Etsy_Importer {
             wp_send_json_error(array('message' => __('Permission denied', 'wc-etsy-importer')));
         }
 
-        // Check if required classes exist
-        if (!class_exists('WC_Etsy_Scraper') || !class_exists('WC_Product_Creator')) {
-            wp_send_json_error(array('message' => __('Plugin dependencies not loaded. Please ensure WooCommerce is active.', 'wc-etsy-importer')));
+        // Ensure WooCommerce is active
+        if (!class_exists('WooCommerce')) {
+            wp_send_json_error(array('message' => __('WooCommerce is not active. Please activate WooCommerce first.', 'wc-etsy-importer')));
+        }
+
+        // Load dependencies if not already loaded
+        if (!class_exists('WC_Etsy_Scraper')) {
+            require_once WC_ETSY_IMPORTER_PLUGIN_DIR . 'includes/class-etsy-scraper.php';
+        }
+        if (!class_exists('WC_Product_Creator')) {
+            require_once WC_ETSY_IMPORTER_PLUGIN_DIR . 'includes/class-wc-product-creator.php';
         }
 
         $url = isset($_POST['url']) ? esc_url_raw($_POST['url']) : '';
@@ -223,9 +231,14 @@ class WC_Etsy_Importer {
     public function ajax_validate_url() {
         check_ajax_referer('wc_etsy_importer_nonce', 'nonce');
 
-        // Check if required classes exist
+        // Ensure WooCommerce is active
+        if (!class_exists('WooCommerce')) {
+            wp_send_json_error(array('message' => __('WooCommerce is not active. Please activate WooCommerce first.', 'wc-etsy-importer')));
+        }
+
+        // Load dependencies if not already loaded
         if (!class_exists('WC_Etsy_Scraper')) {
-            wp_send_json_error(array('message' => __('Plugin dependencies not loaded. Please ensure WooCommerce is active.', 'wc-etsy-importer')));
+            require_once WC_ETSY_IMPORTER_PLUGIN_DIR . 'includes/class-etsy-scraper.php';
         }
 
         $url = isset($_POST['url']) ? esc_url_raw($_POST['url']) : '';
