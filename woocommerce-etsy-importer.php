@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Etsy Importer
  * Plugin URI: https://dcarock.com/wordpress/
  * Description: Import Etsy listings as WooCommerce products with images, variations, and pricing
- * Version: 1.3
+ * Version: 1.3.1
  * Author: Chris Arock
  * Author URI: https://dcarock.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_ETSY_IMPORTER_VERSION', '1.3');
+define('WC_ETSY_IMPORTER_VERSION', '1.3.1');
 define('WC_ETSY_IMPORTER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_ETSY_IMPORTER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WC_ETSY_IMPORTER_PLUGIN_FILE', __FILE__);
